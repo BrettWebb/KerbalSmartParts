@@ -139,6 +139,10 @@ v1.6.0 Proximity Sensor
 		* Similar logic to altimeter smart part - fire on approach, departure, or both
 		* Works out to 2,000 meters
 		* As placeholder, shares model with radio. Planned to change in future. Will not break craft.
+v1.6.1 Version File Update
+	* Updated SmartParts.version file
+v1.6.2 Proximity Detector Bug Fixes
+	* Fixed (hopefully) bug that could prevent proximity detector from firing actions on remote craft
 	 
 	 
 Credits and Acknowledgments

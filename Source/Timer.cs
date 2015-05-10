@@ -87,7 +87,7 @@ namespace Lib
         [KSPField(isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Group:", guiFormat = "N0"),
             UI_FloatEdit(scene = UI_Scene.All, minValue = 1f, maxValue = 250f, incrementLarge = 75f, incrementSmall = 25f, incrementSlide = 1f)]
         public float agxGroupNum = 1;
-        
+
         // remember the time wehen the countdown was started
         [KSPField(isPersistant = true, guiActive = false)]
         private double triggerTime = 0;
@@ -120,46 +120,54 @@ namespace Lib
         #region Events
 
         [KSPEvent(guiActive = false, guiActiveEditor = false, guiName = "Use Seconds")]
-        public void setSeconds() {
+        public void setSeconds()
+        {
             useSeconds = true;
             updateButtons();
         }
 
         [KSPEvent(guiActive = false, guiActiveEditor = false, guiName = "Use Minutes")]
-        public void setMinutes() {
+        public void setMinutes()
+        {
             useSeconds = false;
             updateButtons();
         }
 
         [KSPEvent(guiActive = false, guiActiveEditor = false, guiName = "Enable Staging")]
-        public void activateStaging() {
+        public void activateStaging()
+        {
             enableStaging();
         }
 
         [KSPEvent(guiActive = false, guiActiveEditor = false, guiName = "Disable Staging")]
-        public void deactivateStaging() {
+        public void deactivateStaging()
+        {
             disableStaging();
         }
 
         [KSPEvent(guiName = "Start Countdown", guiActive = true)]
-        public void activateTimer() {
+        public void activateTimer()
+        {
             reset();
             setTimer();
         }
 
         [KSPAction("Start Countdown")]
-        public void activateTimerAG(KSPActionParam param) {
+        public void activateTimerAG(KSPActionParam param)
+        {
             reset();
             setTimer();
         }
 
         [KSPEvent(guiName = "Reset", guiActive = true)]
-        public void resetTimer() {
+        public void resetTimer()
+        {
             reset();
         }
 
         [KSPAction("Reset")]
-        public void resetTimerAG(KSPActionParam param) {
+        public void resetTimerAG(KSPActionParam param)
+        {
             reset();
         }
 
@@ -170,30 +178,35 @@ namespace Lib
 
         private int previousStage = 0;
         private string groupLastUpdate = "0"; //AGX: What was our selected group last update frame? Top slider.
-        
+
 
         #endregion
 
 
         #region Overrides
 
-        public override void OnStart(StartState state) {
-            if (state == StartState.Editor) {
+        public override void OnStart(StartState state)
+        {
+            if (state == StartState.Editor)
+            {
                 this.part.OnEditorAttach += OnEditorAttach;
                 this.part.OnEditorDetach += OnEditorDetach;
                 this.part.OnEditorDestroy += OnEditorDestroy;
                 OnEditorAttach();
             }
-            if(!armed){
+            if (!armed)
+            {
                 Utility.switchLight(this.part, "light-go", true);
                 Utility.playAnimationSetToPosition(this.part, "glow", 1);
                 this.part.stackIcon.SetIconColor(XKCDColors.Red);
             }
-            if (allowStage) {
+            if (allowStage)
+            {
                 Events["activateStaging"].guiActiveEditor = false;
                 Events["deactivateStaging"].guiActiveEditor = true;
             }
-            else {
+            else
+            {
                 Invoke("disableStaging", 0.25f);
             }
             GameEvents.onVesselChange.Add(onVesselChange);
@@ -202,32 +215,38 @@ namespace Lib
             updateButtons();
         }
 
-        public override void OnActive() {
+        public override void OnActive()
+        {
             //If staging enabled, set timer
-            if (allowStage && armed) {
+            if (allowStage && armed)
+            {
                 setTimer();
             }
         }
 
-        public override void OnUpdate() {
+        public override void OnUpdate()
+        {
             //Check to see if the timer has been dragged in the staging list. If so, reset icon color
-            if (this.part.inverseStage != previousStage && allowStage && !armed && this.part.inverseStage + 1 < Staging.CurrentStage) {
+            if (this.part.inverseStage != previousStage && allowStage && !armed && this.part.inverseStage + 1 < Staging.CurrentStage)
+            {
                 reset();
             }
             previousStage = this.part.inverseStage;
 
             //If the timer has been activated, start the countdown, activate the model's LED, and change the icon color
-            if (triggerTime > 0 && armed) {
+            if (triggerTime > 0 && armed)
+            {
                 remainingTime = triggerTime + (useSeconds ? triggerDelaySeconds : triggerDelayMinutes * 60) - Planetarium.GetUniversalTime();
                 Utility.switchLight(this.part, "light-go", true);
                 Utility.playAnimationSetToPosition(this.part, "glow", 1);
                 this.part.stackIcon.SetIconColor(XKCDColors.BrightYellow);
 
                 //Once the timer hits 0 activate the stage/AG, disable the model's LED, and change the icon color
-                if (remainingTime < 0) {
+                if (remainingTime < 0)
+                {
                     print("Stage:" + Helper.KM_dictAGNames[int.Parse(group)]);
                     int groupToFire = 0; //AGX: need to send correct group
-                    if(AGXInterface.AGExtInstalled())
+                    if (AGXInterface.AGExtInstalled())
                     {
                         groupToFire = int.Parse(agxGroupType);
                     }
@@ -244,10 +263,10 @@ namespace Lib
                 }
             }
         }
-            public void Update() //AGX: The OnUpdate above only seems to run in flight mode, Update() here runs in all scenes
+        public void Update() //AGX: The OnUpdate above only seems to run in flight mode, Update() here runs in all scenes
+        {
+            if (agxGroupType == "1" & groupLastUpdate != "1" || agxGroupType != "1" & groupLastUpdate == "1") //AGX: Monitor group to see if we need to refresh window
             {
-                if (agxGroupType == "1" & groupLastUpdate != "1" || agxGroupType != "1" & groupLastUpdate == "1") //AGX: Monitor group to see if we need to refresh window
-                {
                 updateButtons();
                 refreshPartWindow();
                 if (agxGroupType == "1")
@@ -258,8 +277,8 @@ namespace Lib
                 {
                     groupLastUpdate = "0";
                 }
-                }
             }
+        }
 
         #endregion
 
@@ -267,41 +286,47 @@ namespace Lib
         #region Methods
 
 
-        public void onVesselChange(Vessel newVessel) {
-            if (newVessel == this.vessel && !allowStage) {
+        public void onVesselChange(Vessel newVessel)
+        {
+            if (newVessel == this.vessel && !allowStage)
+            {
                 Invoke("disableStaging", 0.25f);
             }
         }
 
-        private void enableStaging() {
+        private void enableStaging()
+        {
             part.stackIcon.CreateIcon();
             Staging.SortIcons();
             allowStage = true;
-
-            //Toggle button visibility so currently inactive mode's button is visible
-            Events["activateStaging"].guiActiveEditor = false;
-            Events["deactivateStaging"].guiActiveEditor = true;
+            updateButtons(); //show/hide correct buttons
+            refreshPartWindow(); //refresh part window so button visibility is correct
+            
         }
 
-        private void disableStaging() {
+        private void disableStaging()
+        {
             part.stackIcon.RemoveIcon();
             Staging.SortIcons();
             allowStage = false;
+            updateButtons(); //show/hide correct buttons
+            refreshPartWindow(); //refresh part window so button visibility is correct
 
-            //Toggle button visibility so currently inactive mode's button is visible
-            Events["activateStaging"].guiActiveEditor = true;
-            Events["deactivateStaging"].guiActiveEditor = false;
+            
         }
 
-        private void setTimer() {
-            if (armed) {
+        private void setTimer()
+        {
+            if (armed)
+            {
                 //Set the trigger time, which will be caught in OnUpdate
                 triggerTime = Planetarium.GetUniversalTime();
                 print("Activating Timer: " + (useSeconds ? triggerDelaySeconds : triggerDelayMinutes * 60));
             }
         }
 
-        private void reset() {
+        private void reset()
+        {
             print("Timer reset");
             //Reset trigger and remaining time to 0
             triggerTime = 0;
@@ -317,7 +342,8 @@ namespace Lib
             this.part.deactivate();
         }
 
-        private void updateButtons() {
+        private void updateButtons()
+        {
             if (useSeconds)
             {
                 //Show minute button
@@ -385,21 +411,39 @@ namespace Lib
                 Fields["agxGroupNum"].guiActiveEditor = false;
                 Fields["agxGroupNum"].guiActive = false;
             }
+            if (allowStage) //control which staging button is active
+            {
+                Events["activateStaging"].guiActiveEditor = false;
+                Events["activateStaging"].guiActive = false;
+                Events["deactivateStaging"].guiActiveEditor = true;
+                Events["deactivateStaging"].guiActive = true;
+            }
+            else
+            {
+                Events["activateStaging"].guiActiveEditor = true;
+                Events["activateStaging"].guiActive = true;
+                Events["deactivateStaging"].guiActiveEditor = false;
+                Events["deactivateStaging"].guiActive = false;
+            }
         }
 
-        private void OnEditorAttach() {
+        private void OnEditorAttach()
+        {
             RenderingManager.AddToPostDrawQueue(99, updateEditor);
         }
 
-        private void OnEditorDetach() {
+        private void OnEditorDetach()
+        {
             RenderingManager.RemoveFromPostDrawQueue(99, updateEditor);
         }
 
-        private void OnEditorDestroy() {
+        private void OnEditorDestroy()
+        {
             RenderingManager.RemoveFromPostDrawQueue(99, updateEditor);
         }
 
-        private void updateEditor() {
+        private void updateEditor()
+        {
             //Update Buttons
             updateButtons();
         }
@@ -408,7 +452,7 @@ namespace Lib
         {
             UIPartActionWindow[] partWins = FindObjectsOfType<UIPartActionWindow>();
             //print("Wind count " + partWins.Count());
-            foreach(UIPartActionWindow partWin in partWins)
+            foreach (UIPartActionWindow partWin in partWins)
             {
                 partWin.displayDirty = true;
             }

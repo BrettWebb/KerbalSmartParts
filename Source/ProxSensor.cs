@@ -109,6 +109,15 @@ namespace Lib
             UI_Toggle(disabledText = "False", enabledText = "True")]
         public bool isArmed = false;
 
+        /* DEBUG CODE
+        [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Get Count")]
+        public void getCount() {
+            MonoBehaviour.print(ProxChannel.Listeners.Count());
+            foreach (var listener in ProxChannel.Listeners) {
+                MonoBehaviour.print(" Name - " + listener.vessel.name + " ID - " + listener.vessel.id + " Channel - " listener.channel);
+            }
+        }*/
+
         #endregion
 
         #region Variables
@@ -128,6 +137,7 @@ namespace Lib
             this.part.force_activate();
             //Clear listeners if the scene changes. Will be recreated on new scene load
             GameEvents.onGameSceneLoadRequested.Add(clearListeners);
+            GameEvents.onVesselLoaded.Add(registerListener);
             //Remove from listeners if vessel or part is destroyed
             this.vessel.OnJustAboutToBeDestroyed += OnJustAboutToBeDestroyed;
             this.part.OnJustAboutToBeDestroyed += OnJustAboutToBeDestroyed;
@@ -136,13 +146,7 @@ namespace Lib
                 this.part.OnEditorDetach += OnEditorDetach;
                 this.part.OnEditorDestroy += OnEditorDestroy;
             }
-            //Check to see if this vessel is already registered, if not, add it
-            else if (ProxChannel.Listeners.Any(listener => listener.vessel.id == this.vessel.id) == false) {
-                MonoBehaviour.print(this.vessel.vesselName + " proximity alarm has been registered");
-                //Register sensor to proximity sensor list
-                ProxChannel.Listeners.Add(this);
-                justRegistered = true;
-            }
+            registerListener();
             updateButtons();
         }
 
@@ -297,6 +301,26 @@ namespace Lib
             ProxChannel.Listeners.Clear();
             ProxChannel.Listeners.TrimExcess();
             MonoBehaviour.print("OnSceneChange");
+        }
+
+        public void registerListener(Vessel ves) {
+            if (ProxChannel.Listeners.Any(listener => listener.vessel.id == this.vessel.id) == true) {
+                ProxChannel.Listeners.RemoveAll(listener => listener.vessel.id == this.vessel.id);
+            }
+            MonoBehaviour.print(this.vessel.vesselName + " proximity alarm has been registered");
+            //Register sensor to proximity sensor list
+            ProxChannel.Listeners.Add(this);
+            justRegistered = true;
+        }
+
+        public void registerListener() {
+            if (ProxChannel.Listeners.Any(listener => listener.vessel.id == this.vessel.id) == true) {
+                ProxChannel.Listeners.RemoveAll(listener => listener.vessel.id == this.vessel.id);
+            }
+            MonoBehaviour.print(this.vessel.vesselName + " proximity alarm has been registered");
+            //Register sensor to proximity sensor list
+            ProxChannel.Listeners.Add(this);
+            justRegistered = true;
         }
 
         private void refreshPartWindow() //AGX: Refresh right-click part window to show/hide Groups slider

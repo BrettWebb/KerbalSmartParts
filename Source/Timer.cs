@@ -298,10 +298,9 @@ namespace Lib
         {
             part.stackIcon.CreateIcon();
             Staging.SortIcons();
-            allowStage = true;
-            updateButtons(); //show/hide correct buttons
+            allowStage = true;;
+            updateButtons(); //show/hide correct buttons;
             refreshPartWindow(); //refresh part window so button visibility is correct
-            
         }
 
         private void disableStaging()
@@ -311,8 +310,6 @@ namespace Lib
             allowStage = false;
             updateButtons(); //show/hide correct buttons
             refreshPartWindow(); //refresh part window so button visibility is correct
-
-            
         }
 
         private void setTimer()

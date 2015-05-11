@@ -143,6 +143,11 @@ v1.6.1 Version File Update
 	* Updated SmartParts.version file
 v1.6.2 Proximity Detector Bug Fixes
 	* Fixed (hopefully) bug that could prevent proximity detector from firing actions on remote craft
+v1.6.3 KIS Support
+	* Added KIS support (Thanks to Diazo)
+v1.6.4 Bug Fixes
+	* Fixed bug with name and description of proximity sensor
+	* WARNING - Will break craft using old sensor
 	 
 	 
 Credits and Acknowledgments

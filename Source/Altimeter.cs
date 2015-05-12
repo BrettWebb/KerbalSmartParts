@@ -257,14 +257,16 @@ namespace Lib
         #region Methods
 
         private void updateAltitude() {
-            //Sea altitude
-            double altSea = this.vessel.mainBody.GetAltitude(this.vessel.CoM);
-            //Altitude over terrain. Does not factor in ocean surface.
-            double altSurface = altSea - this.vessel.terrainAltitude;
             //Set the last altitude for the purpose of direction determination
             double lastAlt = alt;
-            //Use the lowest of the two values as the current altitude.
-            alt = (altSurface < altSea ? altSurface : altSea);
+            if (this.vessel.mainBody.ocean) //if we orbiting a body with an ocean, sea level is the lowest zero meters can be
+            {
+                alt = Math.Min(this.vessel.altitude - this.vessel.pqsAltitude, this.vessel.altitude); //.pqsAltitude is negative if the ground is below sea level (vessel over water), subtract a negative equals addition
+            }
+            else //body we are orbiting does not have an ocean, ignore "sea level" and use height above ground
+            {
+                alt = this.vessel.altitude - this.vessel.pqsAltitude;
+            }
             //Determine if the vessel is ascending or descending
             ascending = (lastAlt < alt ? true : false);
             //Update target window size based on current vertical velocity

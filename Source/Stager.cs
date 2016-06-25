@@ -5,14 +5,13 @@
  */
 
 using KSP.IO;
-using KSPAPIExtensions;
-using KSPAPIExtensions.PartMessage;
-using KSPAPIExtensions.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+
+using KSP.UI;
 
 namespace Lib
 {
@@ -23,8 +22,8 @@ namespace Lib
 
         [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Group"),
             UI_ChooseOption(
-                options = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" },
-                display = new String[] { "Stage", "AG1", "AG2", "AG3", "AG4", "AG5", "AG6", "AG7", "AG8", "AG9", "AG10", "Lights", "RCS", "SAS", "Brakes", "Abort" }
+                options = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" },
+                display = new String[] { "Stage", "AG1", "AG2", "AG3", "AG4", "AG5", "AG6", "AG7", "AG8", "AG9", "AG10", "Lights", "RCS", "SAS", "Brakes", "Abort", "Gear" }
             )]
         public string group = "0";
 
@@ -38,7 +37,8 @@ namespace Lib
                 "12",
                 "13",
                 "14",
-                "15"
+                "15",
+                "16"
             },
             display = new String[] {
                 "Stage",
@@ -47,7 +47,8 @@ namespace Lib
                 "RCS",
                 "SAS",
                 "Brakes",
-                "Abort"
+                "Abort",
+                "Gear"
             }
         )]
         public string agxGroupType = "0";
@@ -84,7 +85,37 @@ namespace Lib
             isArmed = false;
         }
 
-        #endregion
+		#endregion
+		#if false
+		#region Events
+
+		void onDismiss()
+		{
+			print ("onDismiss");
+			Events ["ActivateEvent"].active = true;
+		}
+		void onAccept(string name, VesselType vt)
+		{
+			print ("name: " + name + "    VesselType: " + vt.ToString ());
+			FlightGlobals.ActiveVessel.vesselName = name;
+
+			print ("FlightGlobals.ActiveVessel.name: " + FlightGlobals.ActiveVessel.name);
+			Events ["ActivateEvent"].active = true;
+		}
+		[KSPEvent(active = true, guiActive = true, guiActiveEditor = true, guiName = "Name Cmd Part")]
+		public void ActivateEvent()
+		{
+			ScreenMessages.PostScreenMessage("Clicked Activate", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+
+			// This will hide the Activate event, and show the Deactivate event.
+			Events["ActivateEvent"].active = false;
+			//Events["DeactivateEvent"].active = true;
+
+			KSP.UI.Screens.VesselRenameDialog.Spawn(FlightGlobals.ActiveVessel, onAccept, onDismiss, true, VesselType.Probe);
+
+		}
+		#endregion
+		#endif
 
         #region Variables
 
@@ -101,8 +132,6 @@ namespace Lib
         public override void OnStart(StartState state) {
             if (state == StartState.Editor) {
                 this.part.OnEditorAttach += OnEditorAttach;
-                this.part.OnEditorDetach += OnEditorDetach;
-                this.part.OnEditorDestroy += OnEditorDestroy;
             }
             print("KM Stager Started");
             //Force activation no matter which stage it's on
@@ -130,7 +159,6 @@ namespace Lib
         }
 
         public override void OnAwake() {
-            PartMessageService.Register(this);
         }
 
         public override void OnFixedUpdate() {
@@ -280,29 +308,17 @@ namespace Lib
             illuminated = true;
         }
 
-        [PartMessageListener(typeof(PartResourceListChanged), scenes: GameSceneFilter.AnyEditor, relations: PartRelationship.Parent)]
-        [PartMessageListener(typeof(PartResourceListChanged), scenes: GameSceneFilter.AnyEditor, relations: PartRelationship.Self)]
+/*
         private void changeListener() {
             print("KM Stager: Monitored part resoruces changed. Updating.");
             findObservedPart();
             updateList();
         }
+*/
 
         private void OnEditorAttach() {
-            RenderingManager.AddToPostDrawQueue(99, updateEditor);
             findObservedPart();
             updateList();
-        }
-
-        private void OnEditorDetach() {
-            RenderingManager.RemoveFromPostDrawQueue(99, updateEditor);
-        }
-
-        private void OnEditorDestroy() {
-            RenderingManager.RemoveFromPostDrawQueue(99, updateEditor);
-        }
-
-        private void updateEditor() {
         }
 
         #endregion

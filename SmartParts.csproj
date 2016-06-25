@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{668B7336-C342-4CE6-8BF4-B937C6FF9E37}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SmartParts</RootNamespace>
+    <AssemblyName>SmartParts</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="source/deploy.bat" externalConsole="True" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="source/deploy.bat" externalConsole="True" />
+        <Command type="AfterBuild" command="source/buildRelease.bat" externalConsole="True" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\AGXInterface.cs" />
+    <Compile Include="Source\Altimeter.cs" />
+    <Compile Include="Source\FuelController.cs" />
+    <Compile Include="Source\Helper.cs" />
+    <Compile Include="Source\ProxSensor.cs" />
+    <Compile Include="Source\RadioControl.cs" />
+    <Compile Include="Source\Stager.cs" />
+    <Compile Include="Source\Timer.cs" />
+    <Compile Include="Source\Utility.cs" />
+    <Compile Include="Source\Valve.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="Source\deploy.bat" />
+    <None Include="Source\buildRelease.bat" />
+    <None Include="Source\SmartParts.version" />
+    <None Include="Source\Changelog.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPCore">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\KSPCore.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPUtil">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\KSPUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\System.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>R:\KSP_1.1.3_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>start /D D:\Users\jbb\github\KerbalSmartParts\Source  /WAIT deploy.bat
+
+if $(ConfigurationName) == Release (
+start /D D:\Users\jbb\github\KerbalSmartParts\Source /WAIT buildRelease.bat
+)
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using KSP.IO;
-using KSPAPIExtensions;
 
 namespace Lib
 {
@@ -47,7 +46,8 @@ namespace Lib
                 "12",
                 "13",
                 "14",
-                "15"
+                "15",
+                "16"
             },
             display = new String[] {
                 "Stage",
@@ -65,7 +65,8 @@ namespace Lib
                 "RCS",
                 "SAS",
                 "Brakes",
-                "Abort"
+                "Abort",
+                "Gear"
             }
         )]
         public string group = "0";
@@ -80,7 +81,8 @@ namespace Lib
                 "12",
                 "13",
                 "14",
-                "15"
+                "15",
+                "16"
             },
             display = new String[] {
                 "Stage",
@@ -89,7 +91,8 @@ namespace Lib
                 "RCS",
                 "SAS",
                 "Brakes",
-                "Abort"
+                "Abort",
+                "Gear"
             }
         )]
         public string agxGroupType = "0";
@@ -195,8 +198,15 @@ namespace Lib
         }
 
         [KSPAction("Transmit Abort")]
-        public void transmit_Abort(KSPActionParam param) {
+        public void transmit_Abort(KSPActionParam param)
+        {
             transmitCommand(15);
+        }
+
+        [KSPAction("Transmit Gear")]
+        public void transmit_Gear(KSPActionParam param)
+        {
+            transmitCommand(16);
         }
 
         [KSPEvent(guiName = "Transmit Command", guiActive = true)]
@@ -362,14 +372,7 @@ namespace Lib
 
         public override void OnStart(StartState state) {
             if (state == StartState.Editor) {
-                this.part.OnEditorAttach += OnEditorAttach;
-                this.part.OnEditorDetach += OnEditorDetach;
-                this.part.OnEditorDestroy += OnEditorDestroy;
                 this.part.OnJustAboutToBeDestroyed += OnJustAboutToBeDestroyed;
-
-
-
-                OnEditorAttach();
             }
             else {
                 Channel.radioListeners.Add(this);
@@ -429,19 +432,6 @@ namespace Lib
             MonoBehaviour.print("OnJustAboutToBeDestroyed");
         }
 
-        private void OnEditorAttach() {
-            RenderingManager.AddToPostDrawQueue(99, updateEditor);
-        }
-
-        private void OnEditorDetach() {
-
-            RenderingManager.RemoveFromPostDrawQueue(99, updateEditor);
-        }
-
-        private void OnEditorDestroy() {
-            RenderingManager.RemoveFromPostDrawQueue(99, updateEditor);
-        }
-
         private void updateButtons()
         {
             //Change to AGX buttons if AGX installed
@@ -488,9 +478,6 @@ namespace Lib
             }
         }
 
-        private void updateEditor() {
-
-        }
     }
 }
 

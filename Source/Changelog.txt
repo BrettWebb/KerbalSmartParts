@@ -1,0 +1,5 @@
+﻿1.7.1.1		Initial release by Linuxgurugamer
+
+1.7.2		Incorporated changes by Deimos Rast:
+			1.  Converted textues to DDS
+			2.  Fixed missing closing brace in the parts files

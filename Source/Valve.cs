@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+using KSP.UI.Screens;
+
 namespace Lib
 {
     public class Valve : PartModule
@@ -119,7 +121,7 @@ namespace Lib
                 //Flow rate * number of resources vented * current time step * thrust coefficient (assuming ISP of ~65 and 5 kg per unit of fuel)
                 float appliedForce = force * part.parent.Resources.Count * timeStep * .65f;
                 valveEffect.localVelocity.y = maxSpeedY * force / 100;
-                this.rigidbody.AddRelativeForce((facing == 0 ? Vector3.up : Vector3.forward) * appliedForce * 1);
+				this.part.Rigidbody.AddRelativeForce((facing == 0 ? Vector3.up : Vector3.forward) * appliedForce * 1);
                 foreach (PartResource resource in part.parent.Resources) {
                     if (resource.resourceName == "ElectricCharge")
                         continue;
@@ -158,7 +160,7 @@ namespace Lib
 
         private void enableStaging() {
             part.stackIcon.CreateIcon();
-            Staging.SortIcons();
+            StageManager.Instance.SortIcons(true);
             allowStage = true;
 
             //Toggle button visibility so currently inactive mode's button is visible
@@ -168,7 +170,7 @@ namespace Lib
 
         private void disableStaging() {
             part.stackIcon.RemoveIcon();
-            Staging.SortIcons();
+            StageManager.Instance.SortIcons(true);
             allowStage = false;
 
             //Toggle button visibility so currently inactive mode's button is visible

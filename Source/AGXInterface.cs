@@ -21,7 +21,6 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using KSP.IO;
-using KSPAPIExtensions;
 using System.Reflection;
 
 namespace Lib

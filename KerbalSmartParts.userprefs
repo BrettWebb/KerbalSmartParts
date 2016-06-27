@@ -1,0 +1,24 @@
+﻿<Properties StartupItem="SmartParts.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Source\Stager.cs">
+    <Files>
+      <File FileName="Source\AGXInterface.cs" Line="35" Column="77" />
+      <File FileName="Source\Stager.cs" Line="54" Column="91" />
+      <File FileName="Source\deploy.bat" Line="1" Column="1" />
+      <File FileName="Source\SmartParts.version" Line="1" Column="1" />
+      <File FileName="Source\buildRelease.bat" Line="50" Column="1" />
+      <File FileName="Source\FuelController.cs" Line="25" Column="19" />
+      <File FileName="Source\Helper.cs" Line="1" Column="1" />
+      <File FileName="Source\Altimeter.cs" Line="111" Column="83" />
+      <File FileName="Source\Valve.cs" Line="1" Column="1" />
+      <File FileName="Source\Utility.cs" Line="1" Column="1" />
+      <File FileName="Source\Timer.cs" Line="1" Column="1" />
+      <File FileName="Source\RadioControl.cs" Line="1" Column="1" />
+      <File FileName="Source\ProxSensor.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
